@@ -1,0 +1,43 @@
+version: "3.7"
+services:
+  booking-ui:
+    build: ./Booking/ui/react-booking
+    image: booking-ui
+    ports:
+      - "443:3000"
+    networks:
+      - booking
+    depends_on:
+      - booking-server
+
+  booking-server:
+    build: ./Booking
+    image: booking-server
+    ports:
+      - "80:8443"
+    depends_on:
+      - booking-db
+    networks:
+      - booking
+
+  booking-db:
+    image: mysql/mysql-server:8.0
+    ports:
+      - "3306:3306"
+    restart: always
+    volumes: 
+      - ./mysql-data:/var/lib/mysql
+      - ./Booking/DB.sql:/docker-entrypoint-initdb.d/init.sql
+    restart: always
+    networks:
+      - booking
+    environment:
+      - MYSQL_ROOT_PASSWORD=201075123
+      - MYSQL_DATABASE=BookingSystem
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=201075123
+volumes:
+  mysql-data:
+  
+networks:
+  booking:
